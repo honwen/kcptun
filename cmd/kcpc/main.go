@@ -304,7 +304,7 @@ func main() {
 
 		// Redirect logs when the user supplied a dedicated log file.
 		if config.Log != "" {
-			f, err := os.OpenFile(config.Log, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+			f, err := os.OpenFile(config.Log, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0o666)
 			checkError(err)
 			defer f.Close()
 			log.SetOutput(f)
@@ -574,7 +574,8 @@ func scavenger(ch chan timedSession, config *Config) {
 		case item := <-ch:
 			sessionList = append(sessionList, timedSession{
 				item.session,
-				item.expiryDate.Add(time.Duration(config.ScavengeTTL) * time.Second)})
+				item.expiryDate.Add(time.Duration(config.ScavengeTTL) * time.Second),
+			})
 		case <-ticker.C:
 			// Reuse slice capacity to avoid allocation
 			newList := sessionList[:0]

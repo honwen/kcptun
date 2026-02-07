@@ -53,7 +53,7 @@ func writeSnmpRecord(path string) error {
 	// split path into dirname and filename
 	logdir, logfile := filepath.Split(path)
 	// only format logfile
-	f, err := os.OpenFile(logdir+time.Now().Format(logfile), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	f, err := os.OpenFile(logdir+time.Now().Format(logfile), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0o666)
 	if err != nil {
 		return err
 	}

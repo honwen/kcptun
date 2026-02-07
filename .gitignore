@@ -29,3 +29,5 @@ kcps
 build/*
 .DS_Store
 *Zone.Identifier
+# Added by goreleaser init:
+dist/
