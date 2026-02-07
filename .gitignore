@@ -22,8 +22,10 @@ _testmain.go
 *.exe
 *.test
 *.prof
-client/client
-server/server
+kcpc
+kcps
+!cmd/kcpc/
+!cmd/kcps/
 build/*
 .DS_Store
 *Zone.Identifier

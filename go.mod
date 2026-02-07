@@ -1,5 +1,7 @@
 module github.com/xtaci/kcptun
 
+go 1.25.0
+
 require (
 	github.com/fatih/color v1.18.0
 	github.com/golang/snappy v1.0.0
@@ -26,8 +28,3 @@ require (
 	golang.org/x/sys v0.40.0 // indirect
 	golang.org/x/time v0.14.0 // indirect
 )
-
-// replace github.com/xtaci/smux => /home/xtaci/go/src/github.com/xtaci/smux
-//replace github.com/xtaci/kcp-go/v5 => /home/xtaci/go/src/github.com/xtaci/kcp-go
-
-go 1.24.0

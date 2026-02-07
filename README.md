@@ -84,7 +84,7 @@ Increase the number of open files on your server, as:
 
 Suggested [sysctl.conf](https://github.com/xtaci/kcptun/blob/master/dist/linux/sysctl_linux) parameters for Linux to improve UDP packet handling:
 
-```
+```shell
 net.core.rmem_max=26214400 // BDP - Bandwidth Delay Product
 net.core.rmem_default=26214400
 net.core.wmem_max=26214400
@@ -94,14 +94,14 @@ net.core.netdev_max_backlog=2048 // Proportional to -rcvwnd
 FreeBSD-related sysctl settings can be found here: https://github.com/xtaci/kcptun/blob/master/dist/freebsd/sysctl_freebsd
 
 You can also increase the per-socket buffer by adding the parameter (default 4MB):
-```
+```shell
 -sockbuf 16777217
 ```
 For **slow processors**, increasing this buffer is **CRITICAL** for proper packet reception.
 
-```
-KCP Client: ./client_darwin_amd64 -r "KCP_SERVER_IP:4000" -l ":8388" -mode fast3 -nocomp -autoexpire 900 -sockbuf 16777217 -dscp 46
-KCP Server: ./server_linux_amd64 -t "TARGET_IP:8388" -l ":4000" -mode fast3 -nocomp -sockbuf 16777217 -dscp 46
+```shell
+KCP Client: ./kcpc -r "KCP_SERVER_IP:4000" -l ":8388" -mode fast3 -nocomp -autoexpire 900 -sockbuf 16777217 -dscp 46
+KCP Server: ./kcps -t "TARGET_IP:8388" -l ":4000" -mode fast3 -nocomp -sockbuf 16777217 -dscp 46
 ```
 The above commands will establish a port forwarding channel for port 8388/tcp as follows:
 
@@ -115,7 +115,7 @@ which relays the original connection:
 
 ## Building from source
 
-```
+```shell
 $ git clone https://github.com/xtaci/kcptun.git
 $ cd kcptun
 $ ./build-release.sh
@@ -188,9 +188,9 @@ kcptun uses **Reed-Solomon Codes** for packet recovery, which requires substanti
 - **Enable salsa20 encryption:** Use `--crypt salsa20` on both client and server for a lightweight cipher.
 
 Example:
-```
-./client_linux_amd64 ... --datashard 0 --parityshard 0 --crypt salsa20
-./server_linux_amd64 ... --datashard 0 --parityshard 0 --crypt salsa20
+```shell
+./kcpc ... --datashard 0 --parityshard 0 --crypt salsa20
+./kcps ... --datashard 0 --parityshard 0 --crypt salsa20
 ```
 These settings can significantly reduce CPU usage and improve performance on ARM routers and other low-end hardware.
 
@@ -200,13 +200,13 @@ These settings can significantly reduce CPU usage and improve performance on ARM
 
 <p align="left"><img src="assets/layeredparams.png" alt="params" height="450px"/></p>
 
-```bash 
-$ ./client_freebsd_amd64 -h
+```shell 
+$ ./kcpc -h
 NAME:
    kcptun - client(with SMUX)
 
 USAGE:
-   client_freebsd_amd64 [global options] command [command options] [arguments...]
+   kcpc [global options] command [command options] [arguments...]
 
 VERSION:
    20251124
@@ -250,12 +250,12 @@ GLOBAL OPTIONS:
    --help, -h                       show help
    --version, -v                    print the version
 
-$ ./server_freebsd_amd64 -h
+$ ./kcps -h
 NAME:
    kcptun - server(with SMUX)
 
 USAGE:
-   server_freebsd_amd64 [global options] command [command options] [arguments...]
+   kcps [global options] command [command options] [arguments...]
 
 VERSION:
    20251124
@@ -310,14 +310,14 @@ Under the hood, addresses are parsed and validated as `[host, minPort, maxPort]`
 
 **Usage:**
 1. **Server** — listen on a range:
-   ```bash
-   ./server_linux_amd64 -l ":3000-4000" ...
+   ```shell
+   ./kcps -l ":3000-4000" ...
    ```
    Note: open the UDP ports 3000–4000 in your firewall.
 
 2. **Client** — dial to a range:
-   ```bash
-   ./client_linux_amd64 -r "SERVER_IP:3000-4000" ...
+   ```shell
+   ./kcpc -r "SERVER_IP:3000-4000" ...
    ```
 
 Each new kcptun UDP/KCP session uses one randomly selected port from the range; sessions do not hop ports mid-connection.
@@ -407,7 +407,7 @@ Important:
 
 Benchmarks for crypto algorithms supported by kcptun:
 
-```
+```shell
 BenchmarkSM4-4                 	   50000	     32087 ns/op	  93.49 MB/s	       0 B/op	       0 allocs/op
 BenchmarkAES128-4              	  500000	      3274 ns/op	 916.15 MB/s	       0 B/op	       0 allocs/op
 BenchmarkAES192-4              	  500000	      3587 ns/op	 836.34 MB/s	       0 B/op	       0 allocs/op
@@ -425,7 +425,7 @@ BenchmarkSalsa20-4             	  500000	      3282 ns/op	 913.90 MB/s	       0 
 
 Benchmark result from openssl
 
-```
+```shell
 $ openssl speed -evp aes-128-cfb
 Doing aes-128-cfb for 3s on 16 size blocks: 157794127 aes-128-cfb's in 2.98s
 Doing aes-128-cfb for 3s on 64 size blocks: 39614018 aes-128-cfb's in 2.98s
@@ -450,7 +450,7 @@ Starting with version v20240701, kcptun adopts [QPP](https://github.com/xtaci/qp
 ![da824f7919f70dd1dfa3be9d2302e4e0](https://github.com/xtaci/kcptun/assets/2346725/7894f5e3-6134-4582-a9fe-e78494d2e417)
 
 To enable QPP in kcptun, set the following parameters:
-```
+```shell
    --QPP                Enable Quantum Permutation Pads (QPP)
    --QPPCount value     The prime number of pads to use for QPP. More pads provide greater encryption security. Each pad requires 256 bytes. (default: 61)
 ```
