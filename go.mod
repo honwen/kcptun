@@ -3,6 +3,7 @@ module github.com/xtaci/kcptun
 require (
 	github.com/fatih/color v1.18.0
 	github.com/golang/snappy v1.0.0
+	github.com/klauspost/compress v1.18.3
 	github.com/pkg/errors v0.9.1
 	github.com/urfave/cli v1.22.17
 	github.com/xtaci/kcp-go/v5 v5.6.66
@@ -16,7 +17,6 @@ require (
 	github.com/coreos/go-iptables v0.8.0 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.7 // indirect
 	github.com/google/gopacket v1.1.19 // indirect
-	github.com/klauspost/compress v1.18.3 // indirect
 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
 	github.com/klauspost/reedsolomon v1.13.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
