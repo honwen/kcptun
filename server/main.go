@@ -148,6 +148,25 @@ func main() {
 			Usage: "disable compression",
 		},
 		cli.BoolFlag{
+			Name:  "zstd",
+			Usage: "use zstd compression instead of snappy",
+		},
+		cli.IntFlag{
+			Name:  "zstdwindow",
+			Value: 32,
+			Usage: "zstd window size in MB",
+		},
+		cli.IntFlag{
+			Name:  "zstdlevel",
+			Value: 4,
+			Usage: "zstd compression level: 1=fastest, 2=default, 3=better, 4=best",
+		},
+		cli.IntFlag{
+			Name:  "zstdconcurrency",
+			Value: 1,
+			Usage: "zstd encoder concurrency",
+		},
+		cli.BoolFlag{
 			Name:   "acknodelay",
 			Usage:  "flush ack immediately when a packet is received",
 			Hidden: true,
@@ -255,6 +274,10 @@ func main() {
 		config.ParityShard = c.Int("parityshard")
 		config.DSCP = c.Int("dscp")
 		config.NoComp = c.Bool("nocomp")
+		config.Zstd = c.Bool("zstd")
+		config.ZstdWindow = c.Int("zstdwindow")
+		config.ZstdLevel = c.Int("zstdlevel")
+		config.ZstdConcurrency = c.Int("zstdconcurrency")
 		config.AckNodelay = c.Bool("acknodelay")
 		config.NoDelay = c.Int("nodelay")
 		config.Interval = c.Int("interval")
@@ -307,7 +330,13 @@ func main() {
 		log.Println("QPP Count:", config.QPPCount)
 		log.Println("nodelay parameters:", config.NoDelay, config.Interval, config.Resend, config.NoCongestion)
 		log.Println("sndwnd:", config.SndWnd, "rcvwnd:", config.RcvWnd)
-		log.Println("compression:", !config.NoComp)
+		if config.NoComp {
+			log.Println("compression: disabled")
+		} else if config.Zstd {
+			log.Printf("compression: zstd (window: %dMB, level: %d, concurrency: %d)", config.ZstdWindow, config.ZstdLevel, config.ZstdConcurrency)
+		} else {
+			log.Println("compression: snappy")
+		}
 		log.Println("mtu:", config.MTU)
 		log.Println("ratelimit:", config.RateLimit)
 		log.Println("datashard:", config.DataShard, "parityshard:", config.ParityShard)
@@ -435,6 +464,14 @@ func serveListener(lis *kcp.Listener, _Q_ *qpp.QuantumPermutationPad, config *Co
 
 		if config.NoComp {
 			go handleMux(_Q_, conn, config)
+		} else if config.Zstd {
+			zs, zerr := std.NewZstdStream(conn, config.ZstdWindow<<20, config.ZstdLevel, config.ZstdConcurrency)
+			if zerr != nil {
+				log.Println("NewZstdStream:", zerr)
+				conn.Close()
+				continue
+			}
+			go handleMux(_Q_, zs, config)
 		} else {
 			go handleMux(_Q_, std.NewCompStream(conn), config)
 		}

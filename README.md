@@ -100,16 +100,16 @@ You can also increase the per-socket buffer by adding the parameter (default 4MB
 For **slow processors**, increasing this buffer is **CRITICAL** for proper packet reception.
 
 ```
-KCP Client: ./client_darwin_amd64 -r "KCP_SERVER_IP:4000" -l ":8388" -mode fast3 -nocomp -autoexpire 900 -sockbuf 16777217 -dscp 46
-KCP Server: ./server_linux_amd64 -t "TARGET_IP:8388" -l ":4000" -mode fast3 -nocomp -sockbuf 16777217 -dscp 46
+KCP Client: ./client_darwin_amd64 -r "KCP_SERVER_IP:4000" -l ":9000" -mode fast3 -nocomp -autoexpire 900 -sockbuf 16777217 -dscp 46
+KCP Server: ./server_linux_amd64 -t "TARGET_IP:9000" -l ":4000" -mode fast3 -nocomp -sockbuf 16777217 -dscp 46
 ```
-The above commands will establish a port forwarding channel for port 8388/tcp as follows:
+The above commands will establish a port forwarding channel for port 9000/tcp as follows:
 
-> Application -> **KCP Client(8388/tcp) -> KCP Server(4000/udp)** -> Target Server(8388/tcp) 
+> Application -> **KCP Client(9000/tcp) -> KCP Server(4000/udp)** -> Target Server(9000/tcp) 
 
 which relays the original connection:
 
-> Application -> Target Server(8388/tcp) 
+> Application -> Target Server(9000/tcp) 
 
 **_OR START WITH THESE COMPLETE CONFIGURATION FILES:_** [client](https://github.com/xtaci/kcptun/blob/master/dist/local.json.example) --> [server](https://github.com/xtaci/kcptun/blob/master/dist/server.json.example)
 
@@ -174,7 +174,7 @@ For versions >= v20190924, it is recommended to use smux v2:
 
 Example:
 ```
-./client_linux_amd64 -r "server_ip:4000" -l ":8388" -smuxver 2 -smuxbuf 8388608 -streambuf 2097152
+./client_linux_amd64 -r "server_ip:4000" -l ":9000" -smuxver 2 -smuxbuf 8388608 -streambuf 2097152
 ```
 This command sets the total smux buffer to 8MB and limits each stream to 2MB.
 
@@ -578,9 +578,6 @@ In summary: `none` keeps the protocol header (plaintext payload), while `null` s
 1. http://www.lartc.org/ -- Linux Advanced Routing & Traffic Control
 1. https://en.wikipedia.org/wiki/Noisy-channel_coding_theorem -- Noisy channel coding theorem
 1. https://zhuanlan.zhihu.com/p/53849089 -- kcptun开发小记
-
-### Donation
-Click [here](https://github.com/xtaci/xtaci/issues/2) to donate.
 
 
 ***（注意：kcptun没有任何社交网站的账号，请小心骗子。）***
