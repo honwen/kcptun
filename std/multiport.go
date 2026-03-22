@@ -70,5 +70,4 @@ func ParseMultiPort(addr string) (*MultiPort, error) {
 	}
 
 	return nil, errors.Errorf("malformed address:%v", addr)
-
 }

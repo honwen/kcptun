@@ -10,13 +10,13 @@
 ## 2. Architecture
 The project follows a Client-Server architecture:
 
-- **Client (`client/`)**:
+- **Client (`./cmd/kcpc/`)**:
   - Listens on a local TCP port.
   - Encapsulates TCP traffic into KCP packets.
   - Sends KCP packets to the Server via UDP.
   - Handles encryption/decryption and multiplexing (SMUX).
 
-- **Server (`server/`)**:
+- **Server (`./cmd/kcps/`)**:
   - Listens on a UDP port for KCP traffic.
   - Decapsulates KCP packets back to TCP.
   - Forwards TCP traffic to the target server.
@@ -27,11 +27,11 @@ The project follows a Client-Server architecture:
 
 ## 3. Directory Structure
 
-- **`client/`**: Contains the source code for the client application.
+- **`./cmd/kcpc/`**: Contains the source code for the client application.
   - `main.go`: Entry point, flag parsing, and main loop.
   - `config.go`: Configuration handling.
   - `dial.go`: Logic for dialing connections, including multiport dialer.
-- **`server/`**: Contains the source code for the server application.
+- **`./cmd/kcps/`**: Contains the source code for the server application.
   - `main.go`: Entry point, flag parsing, and main loop.
   - `config.go`: Configuration handling.
 - **`std/`**: Shared standard utilities used by both client and server.
@@ -70,8 +70,8 @@ This will generate binaries in the `build/` directory for a wide range of platfo
 
 **Using Go:**
 ```bash
-go build -o client_bin ./client
-go build -o server_bin ./server
+go build ./cmd/kcpc
+go build ./cmd/kcps
 ```
 
 **Using Docker:**
@@ -84,12 +84,12 @@ The image exposes ports `29900/udp` (Server) and `12948` (Client).
 ### Running
 **Client:**
 ```bash
-./client_bin -r "KCP_SERVER_IP:4000" -l ":8388" -mode fast3
+./kcpc -r "KCP_SERVER_IP:4000" -l ":8388" -mode fast3
 ```
 
 **Server:**
 ```bash
-./server_bin -t "TARGET_IP:8388" -l ":4000" -mode fast3
+./kcps -t "TARGET_IP:8388" -l ":4000" -mode fast3
 ```
 
 ## 6. Configuration & Tuning

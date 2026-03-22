@@ -1,0 +1,59 @@
+version: 2
+
+env:
+  - CGO_ENABLED=0
+
+before:
+  hooks:
+    - go mod download -x
+    - go mod tidy
+    - go generate ./...
+
+builds:
+  - id: kcpc
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X main.VERSION={{ .Version }} -X main.CommitSHA={{ .ShortCommit }}
+    main: ./cmd/kcpc
+    binary: kcpc
+
+  - id: kcps
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X main.VERSION={{ .Version }} -X main.CommitSHA={{ .ShortCommit }}
+    main: ./cmd/kcps
+    binary: kcps
+
+archives:
+  - ids: [kcpc, kcps]
+    formats: [tar.gz]
+    name_template: "{{ .ProjectName }}-{{.Os}}-{{.Arch}}{{if .Arm}}v{{.Arm}}{{end}}"
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+
+release:
+  footer: >-
+
+    ---
+
+    Released by [GoReleaser](https://github.com/goreleaser/goreleaser).
